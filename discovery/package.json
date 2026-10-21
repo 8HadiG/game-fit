@@ -1,0 +1,17 @@
+{
+  "name": "discovery",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Collect Android game package IDs from Google Play",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test:db": "node test-db.js"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.8",
+    "google-play-scraper": "^10.1.4",
+    "pg": "^8.23.1"
+  }
+}
