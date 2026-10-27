@@ -29,7 +29,7 @@ const pool = new Pool({
     password: process.env.PGPASSWORD,
 });
 
-async function fetchPackageIds(list) {
+async function fetchAppIds(list) {
     console.log(`Fetching: ${list.name}`);
 
     try {
@@ -41,12 +41,12 @@ async function fetchPackageIds(list) {
             lang: LANGUAGE,
         });
 
-        const packageIds = apps
+        const appIds = apps
             .map((app) => app.appId)
             .filter((appId) => typeof appId === "string" && appId.length > 0);
 
-        console.log(`  Found ${packageIds.length} package IDs.`);
-        return packageIds;
+        console.log(`  Found ${appIds.length} app IDs.`);
+        return appIds;
     } catch (error) {
         console.error(`  Failed to fetch "${list.name}": ${error.message}`);
         return [];
@@ -71,32 +71,32 @@ console.log("Chart collections:", collections.length);
 console.log("Game categories:", gameCategories.length);
 console.log("Total lists:", allLists.length);
 
-const discoveredPackageIds = new Set();
+const discoveredAppIds = new Set();
 
 for (const list of allLists) {
-    const packageIds = await fetchPackageIds(list);
+    const appIds = await fetchAppIds(list);
 
-    for (const packageId of packageIds) {
-        discoveredPackageIds.add(packageId);
+    for (const appId of appIds) {
+        discoveredAppIds.add(appId);
     }
 }
 
 console.log("");
 console.log("Google Play discovery completed.");
 console.log("Lists processed:", allLists.length);
-console.log("Unique package IDs found:", discoveredPackageIds.size);
+console.log("Unique app IDs found:", discoveredAppIds.size);
 
 let inserted = 0;
 let skipped = 0;
 
-for (const packageId of discoveredPackageIds) {
+for (const appId of discoveredAppIds) {
     try {
         const result = await pool.query(
-            `INSERT INTO games (package_id)
+            `INSERT INTO games (app_id)
        VALUES ($1)
-       ON CONFLICT (package_id) DO NOTHING
+       ON CONFLICT (app_id) DO NOTHING
        RETURNING id`,
-            [packageId]
+            [appId]
         );
 
         if (result.rowCount === 1) {
@@ -105,7 +105,7 @@ for (const packageId of discoveredPackageIds) {
             skipped++;
         }
     } catch (error) {
-        console.error(`Failed to insert ${packageId}: ${error.message}`);
+        console.error(`Failed to insert ${appId}: ${error.message}`);
         await pool.end();
         process.exitCode = 1;
         break;
@@ -114,7 +114,7 @@ for (const packageId of discoveredPackageIds) {
 
 console.log("");
 console.log("Database import summary");
-console.log("Unique package IDs found:", discoveredPackageIds.size);
+console.log("Unique app IDs found:", discoveredAppIds.size);
 console.log("Inserted:", inserted);
 console.log("Skipped (already stored):", skipped);
 
