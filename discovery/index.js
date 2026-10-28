@@ -92,10 +92,9 @@ let skipped = 0;
 for (const appId of discoveredAppIds) {
     try {
         const result = await pool.query(
-            `INSERT INTO games (app_id)
+            `INSERT INTO scraped.games (app_id)
        VALUES ($1)
-       ON CONFLICT (app_id) DO NOTHING
-       RETURNING id`,
+       ON CONFLICT (app_id) DO NOTHING`,
             [appId]
         );
 
