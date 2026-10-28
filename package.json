@@ -1,6 +1,7 @@
 ﻿{
   "private": true,
   "scripts": {
-    "discovery": "npm --prefix discovery start"
+    "discovery": "npm --prefix discovery start",
+    "enrichment": "npm --prefix enrichment start"
   }
 }
