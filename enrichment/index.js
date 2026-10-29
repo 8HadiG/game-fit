@@ -2,7 +2,7 @@ import "dotenv/config";
 import gplay from "google-play-scraper";
 import { Pool } from "pg";
 
-const limit = 250;
+const limit = 3;
 
 const pool = new Pool();
 
@@ -27,11 +27,10 @@ async function main() {
             ad_supported IS NULL OR
             released IS NULL OR
             url IS NULL OR
-            developer_id IS NULL OR
-            genre_id IS NULL OR
             updated_day IS NULL
         )
-        ORDER BY created_at ASC
+        ORDER BY last_modified ASC NULLS FIRST,
+            created_at ASC
         LIMIT $1`,
         [limit]
     );
@@ -65,7 +64,7 @@ async function main() {
             price_cents: app.price != null ? Math.round(app.price * 100) : null,
             free: app.free ?? null,
             offers_iap: app.offersIAP ?? null,
-            android_version: app.androidVersion ?? null,
+            android_version: parseAndroidVersion(app.androidVersion),
             screenshots: app.screenshots ?? null,
             icon: app.icon ?? null,
             header_image: app.headerImage ?? null,
@@ -80,6 +79,14 @@ async function main() {
         const d = new Date(input);
         if (isNaN(d)) return null;
         return d.toISOString().slice(0, 10);
+    }
+
+    function parseAndroidVersion(v) {
+        if (!v) return null;
+        const m = String(v).match(/\d+(\.\d+)?/);
+        if (!m) return null;
+        const n = parseFloat(m[0]);
+        return Number.isFinite(n) ? n : null;
     }
 
     async function updateGames(data) {
