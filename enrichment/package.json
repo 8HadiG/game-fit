@@ -1,5 +1,6 @@
 {
   "name": "enrichment",
+  "private": true,
   "type": "module",
   "scripts": {
     "start": "node index.js",

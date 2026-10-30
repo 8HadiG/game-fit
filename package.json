@@ -1,4 +1,5 @@
 ﻿{
+  "name": "game_fit",
   "private": true,
   "scripts": {
     "discovery": "npm --prefix discovery start",
