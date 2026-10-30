@@ -2,7 +2,7 @@ import "dotenv/config";
 import gplay from "google-play-scraper";
 import { Pool } from "pg";
 
-const limit = 300;
+const limit = Number(process.argv[2]) || 2;
 
 const pool = new Pool();
 
