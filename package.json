@@ -1,6 +1,7 @@
 ﻿{
   "name": "game_fit",
   "private": true,
+  "version": "1.0.0",
   "scripts": {
     "discovery": "npm --prefix discovery start",
     "enrichment": "npm --prefix enrichment start"
