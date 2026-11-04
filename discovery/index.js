@@ -2,8 +2,8 @@ import "dotenv/config";
 import gplay from "google-play-scraper";
 import mysql from "mysql2/promise";
 
-const limit = Number(process.argv[2]) || 1;
-const scrapReqPS = 10;
+const limit = Number(process.argv[2]) || 500;
+const scrapReqPS = 4;
 const scrapResPS = 1;
 
 const collections = [
@@ -40,7 +40,8 @@ const pool = mysql.createPool({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     port: Number(process.env.DB_PORT),
-    database: process.env.DB_NAME
+    database: process.env.DB_NAME,
+    flags: '-FOUND_ROWS'
 });
 
 async function fetchAppIds(reqps = 5, resps = 1) {
@@ -58,6 +59,7 @@ async function fetchAppIds(reqps = 5, resps = 1) {
                 res = await gplay.list({
                     collection, category,
                     num: limit,
+                    fullDetail: false,
                     throttle: reqps
                 });
             } catch (err) {
