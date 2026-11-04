@@ -43,7 +43,7 @@ async function main(reqps = 5, resps = 1) {
                 throttle: reqps
             });
 
-            console.log(`\n\nCategory: ${category}\nCollection: ${collection}\n`, res.map(g => g.title));
+            console.log(`${category} -> ${collection}:\n${res.map(g => g.title)}\n\n`);
 
             await new Promise(r => setTimeout(r, 1000 / resps));
         }
