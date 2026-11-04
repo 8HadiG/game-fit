@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "test:db": "node test-db.js"
+    "test:db": "node test-db.js",
+    "test:gps": "node test-gps.js"
   },
   "dependencies": {
     "dotenv": "^18.0.8",
