@@ -11,6 +11,7 @@
   "dependencies": {
     "dotenv": "^18.0.9",
     "google-play-scraper": "^10.1.4",
+    "mysql2": "^3.24.6",
     "pg": "^8.23.1"
   }
 }
