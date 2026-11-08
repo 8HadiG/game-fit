@@ -4,6 +4,9 @@
   "version": "1.0.0",
   "scripts": {
     "discovery": "npm --prefix discovery start",
-    "enrichment": "npm --prefix enrichment start"
+    "enrichment": "npm --prefix enrichment start",
+    "web:dev": "npm --prefix web/front dev",
+    "web:build": "npm --prefix web/front build",
+    "web:pro": "npm --prefix web/back-node start"
   }
 }

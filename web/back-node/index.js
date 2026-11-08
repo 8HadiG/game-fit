@@ -1,8 +1,11 @@
-import http from 'node:http';
+import express from 'express';
+import path from 'path';
 
-const server = http.createServer((req, res) => {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ ok: true, path: req.url }));
-});
+const app = express();
 
-server.listen(3000, () => console.log('http://localhost:3000'));
+const distPath = path.join(import.meta.dirname, '..', 'front', 'dist');
+
+app.use(express.static(distPath));
+app.use((req, res) => res.sendFile(path.join(distPath, 'index.html')));
+
+app.listen(3000, () => console.log('http://localhost:3000'));

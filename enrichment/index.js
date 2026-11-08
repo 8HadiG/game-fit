@@ -263,12 +263,12 @@ async function updateRows() {
     }
 
     const data = await fetchApps();
-    await updateGames(data);
+    updateGames(data);
 }
 
-async function main(toDo) {
-    if (toDo == "fill") await fillNullRows();
-    else await syncOldRows();
+function main(toDo) {
+    if (toDo == "fill") fillNullRows();
+    else syncOldRows();
 }
 
-await main(toDo);
+main(toDo);
