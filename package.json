@@ -5,8 +5,8 @@
   "scripts": {
     "discovery": "npm --prefix discovery start",
     "enrichment": "npm --prefix enrichment start",
-    "web:dev": "npm --prefix web/front dev",
-    "web:build": "npm --prefix web/front build",
-    "web:pro": "npm --prefix web/back-node start"
+    "web:build": "npm --prefix web/front run build",
+    "web:dev": "npm --prefix web/front run dev",
+    "web:server": "npm --prefix web/back-node start"
   }
 }

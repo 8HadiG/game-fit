@@ -1,4 +1,14 @@
+import { useEffect, useState } from 'react';
+
 export default function App() {
+  const [msg, setMsg] = useState('');
+
+  useEffect(() => {
+    fetch('/api')
+      .then(res => res.text())
+      .then(setMsg);
+  }, []);
+
   const gameDetail = {
     title: "Boom Beach",
     developer: "Supercell",
@@ -10,7 +20,10 @@ export default function App() {
   };
 
   return (
-    <Card {...gameDetail} />
+    <>
+      <h1>{msg}</h1>
+      <Card {...gameDetail} />
+    </>
   );
 }
 
