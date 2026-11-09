@@ -1,42 +1,23 @@
 import { useEffect, useState } from 'react';
 
 export default function App() {
-  const [msg, setMsg] = useState('');
+  const [data, setdata] = useState('');
+
+  const params = new URLSearchParams({
+    ageMin: 3,
+    ageMax: 10
+  });
 
   useEffect(() => {
-    fetch('/api')
+    fetch('/api?${params}', { method: "GET" })
       .then(res => res.text())
-      .then(setMsg);
+      .then(setdata);
   }, []);
 
-  const gameDetail = {
-    title: "Boom Beach",
-    developer: "Supercell",
-    installs: "25M",
-    score: 4.5,
-    price: 0,
-    iap: true,
-    ads: true
-  };
-
   return (
     <>
-      <h1>{msg}</h1>
-      <Card {...gameDetail} />
-    </>
-  );
-}
-
-function Card({ title, developer, installs, score, price, iap, ads }) {
-  return (
-    <>
-      <h3>{title}</h3>
-      <h4>{developer}</h4>
-      <p>{installs}</p>
-      <p>{score}</p>
-      <p>{price}</p>
-      <p>{iap}</p>
-      <p>{ads}</p>
+      <h1>Welcome</h1>
+      <p>{data}</p>
     </>
   );
 }
