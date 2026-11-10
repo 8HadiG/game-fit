@@ -5,47 +5,48 @@ const router = Router();
 
 const limit = `LIMIT 10`;
 
-// TODO: add[genre, tags]
+// TODO: add tags (one-of-tags[] and all-of-tags[])
 const ALLOWED_KEYS = [
     "sortBy",
-    "free =",
-    "offers_iap =",
-    "ad_supported =",
-    "android_version <=",
-    "max_installs <=",
-    "max_installs >=",
-    "score <=",
-    "score >=",
-    "price <=",
-    "price >=",
-    "ratings <=",
-    "ratings >=",
-    "reviews <=",
-    "reviews >=",
-    "updated <=",
-    "updated >=",
-    "released <=",
-    "released >="
+    "games.free =",
+    "games.offers_iap =",
+    "games.ad_supported =",
+    "games.android_version <=",
+    "games.max_installs <=",
+    "games.max_installs >=",
+    "games.score <=",
+    "games.score >=",
+    "games.price <=",
+    "games.price >=",
+    "games.ratings <=",
+    "games.ratings >=",
+    "games.reviews <=",
+    "games.reviews >=",
+    "games.updated <=",
+    "games.updated >=",
+    "games.released <=",
+    "games.released >=",
+    "genres.genre IN"
 ];
 
-const DEFAULT_SORT = "max_installs DESC";
+const DEFAULT_SORT = "games.max_installs DESC";
 const ALLOWED_SORTS = [
-    "max_installs ASC",
-    "max_installs DESC",
-    "score ASC",
-    "score DESC",
-    "ratings ASC",
-    "ratings DESC",
-    "reviews ASC",
-    "reviews DESC",
-    "price ASC",
-    "price DESC",
-    "android_version ASC",
-    "android_version DESC",
-    "updated ASC",
-    "updated DESC",
-    "released ASC",
-    "released DESC",
+    "games.max_installs ASC",
+    "games.max_installs DESC",
+    "games.score ASC",
+    "games.score DESC",
+    "games.ratings ASC",
+    "games.ratings DESC",
+    "games.reviews ASC",
+    "games.reviews DESC",
+    "games.price ASC",
+    "games.price DESC",
+    "games.android_version ASC",
+    "games.android_version DESC",
+    "games.updated ASC",
+    "games.updated DESC",
+    "games.released ASC",
+    "games.released DESC",
 ];
 
 router.get('/', async (req, res) => {
@@ -60,7 +61,11 @@ router.get('/', async (req, res) => {
         const normV = normalizeValue(key, value);
         if (normV === null) continue;
 
-        conditions.push(`${key} ?`);
+        if (key === "genres.genre IN") {
+            conditions.push(`${key} (?)`);
+        } else {
+            conditions.push(`${key} ?`);
+        }
         values.push(normV);
     }
 
@@ -104,7 +109,7 @@ router.get('/', async (req, res) => {
     `.replace(/\s+/g, ' ').trim();
 
     try {
-        const [rows] = await pool.execute(sql, values);
+        const [rows] = await pool.query(sql, values);
         res.json(rows);
     } catch (err) {
         console.error(err);
@@ -114,31 +119,33 @@ router.get('/', async (req, res) => {
 
 function normalizeValue(condition, value) {
     switch (condition) {
-        case "free =":
-        case "offers_iap =":
-        case "ad_supported =":
+        case "games.free =":
+        case "games.offers_iap =":
+        case "games.ad_supported =":
             return normalizeValueBool();
-        case "android_version <=":
+        case "games.android_version <=":
             return normalizeValueNumber(0, 99.99, 2);
-        case "max_installs <=":
-        case "max_installs >=":
+        case "games.max_installs <=":
+        case "games.max_installs >=":
             return normalizeValueNumber(0, 100_000_000_000, 0);
-        case "score <=":
-        case "score >=":
+        case "games.score <=":
+        case "games.score >=":
             return normalizeValueNumber(0, 5, 3);
-        case "price <=":
-        case "price >=":
+        case "games.price <=":
+        case "games.price >=":
             return normalizeValueNumber(0, 999.99, 2);
-        case "ratings <=":
-        case "ratings >=":
-        case "reviews <=":
-        case "reviews >=":
+        case "games.ratings <=":
+        case "games.ratings >=":
+        case "games.reviews <=":
+        case "games.reviews >=":
             return normalizeValueNumber(0, 10_000_000_000, 0);
-        case "updated <=":
-        case "updated >=":
-        case "released <=":
-        case "released >=":
+        case "games.updated <=":
+        case "games.updated >=":
+        case "games.released <=":
+        case "games.released >=":
             return normalizeValueDate();
+        case "genres.genre IN":
+            return normalizeValueArray();
         default:
             return null;
     }
@@ -162,6 +169,12 @@ function normalizeValue(condition, value) {
         const dtString = new Date(value);
         if (isNaN(dtString)) return null;
         return dtString.toISOString().slice(0, 10)
+    }
+
+    function normalizeValueArray() {
+        if (typeof value === 'string') return value.split(',').map(s => s.trim()).filter(Boolean);
+        if (Array.isArray(value)) return value;
+        return null;
     }
 }
 

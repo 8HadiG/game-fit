@@ -5,8 +5,10 @@ export default function App() {
   const [data, setdata] = useState([]);
 
   const params = new URLSearchParams({
-    'max_installs <=': 1_000_000,
-    'max_installs >=': 1_000,
+    'sortBy': "games.price DESC",
+    'games.max_installs <=': 1_000_000,
+    'games.max_installs >=': 1_000,
+    "genres.genre IN": ["aCtion", " ", '', true, ' ', "", 'Strategy'],
     ageMin: 3,
     ageMax: 10
   }).toString();
