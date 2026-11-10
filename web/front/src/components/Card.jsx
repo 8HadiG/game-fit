@@ -4,7 +4,7 @@ export default function Card({
     header_image,
     icon,
     title,
-    developer_id,
+    developer,
     free,
     price,
     offers_iap,
@@ -74,7 +74,7 @@ export default function Card({
                     <h3 className="font-bold text-sm sm:text-base line-clamp-2">{title}</h3>
                 </div>
 
-                <p className="text-xs opacity-80 truncate">{developer_id}</p>
+                <p className="text-xs opacity-80 truncate">{developer.name}</p>
 
                 <div className="flex flex-wrap items-center gap-1 text-[11px]">
                     <span className="rounded bg-black/60 text-white px-1.5 py-0.5">{free ? "Free" : `${price}$`}</span>

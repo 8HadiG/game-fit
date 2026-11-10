@@ -71,7 +71,37 @@ router.get('/', async (req, res) => {
         order = `ORDER BY ${sortBy}`;
     }
 
-    const sql = `SELECT * FROM games ${where} ${order} ${limit}`.trim();
+    const sql = `
+        SELECT
+            games.*,
+            JSON_OBJECT(
+                'id', genres.id,
+                'name', genres.genre
+            ) AS genre,
+            JSON_OBJECT(
+                'id', developers.id,
+                'dev_id', developers.developer_id,
+                'website', developers.developer_website,
+                'name', developers.developer
+            ) AS developer,
+            (
+                SELECT JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                        'id', tags.id,
+                        'name', tags.tag
+                    )
+                )
+                FROM games_tags
+                LEFT JOIN tags ON games_tags.tag_id = tags.id
+                WHERE games_tags.game_id = games.id
+            ) AS tags
+        FROM games
+        LEFT JOIN genres ON games.genre_id = genres.id
+        LEFT JOIN developers ON games.developer_id = developers.id
+        ${where}
+        ${order}
+        ${limit}
+    `.replace(/\s+/g, ' ').trim();
 
     try {
         const [rows] = await pool.execute(sql, values);
