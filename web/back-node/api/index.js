@@ -60,7 +60,7 @@ router.get('/', async (req, res) => {
         const normV = normalizeValue(key, value);
         if (normV === null) continue;
 
-        conditions.push(`\`${key}\` = ?`);
+        conditions.push(`${key} ?`);
         values.push(normV);
     }
 
