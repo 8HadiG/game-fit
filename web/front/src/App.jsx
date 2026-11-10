@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Card from './components/Card';
 
 export default function App() {
-  const [data, setdata] = useState('');
+  const [data, setdata] = useState([]);
 
   const params = new URLSearchParams({
     'max_installs <=': 1_000_000,
@@ -13,25 +13,19 @@ export default function App() {
 
   useEffect(() => {
     fetch(`/api?${params}`, { method: "GET" })
-      .then(res => res.text())
+      .then(res => res.json())
       .then(setdata);
   }, []);
 
-  const cardData = {
-    title: "Wireless Headphones",
-    subtitle: "Noise cancelling",
-    image: "https://picsum.photos/400/200",
-    description: "Premium sound with 30h battery life.",
-    tag: "New",
-    value: "$199",
-    action: { label: "Buy now", onClick: () => alert("Added!") },
-  };
-
   return (
     <>
-      <h1>Welcome</h1>
-      <Card data={cardData} />
-      <p>{data}</p>
+      <ul className="grid gap-4 p-4 grid-cols-[repeat(auto-fill,minmax(180px,1fr))]">
+        {data.map((item) => (
+          <li key={item.id} className="w-full max-w-[260px] mx-auto">
+            <Card {...item} />
+          </li>
+        ))}
+      </ul>
     </>
   );
 }
