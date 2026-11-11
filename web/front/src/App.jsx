@@ -8,6 +8,8 @@ export default function App() {
     'sortBy': "games.price DESC",
     'games.max_installs <=': 1_000_000,
     'games.max_installs >=': 1_000,
+    'oneOfTags': ['casual', 'ppp'],
+    'allOfTags': ["action", "stylIzed"],
     "genres.genre IN": ["aCtion", " ", '', true, ' ', "", 'Strategy'],
     ageMin: 3,
     ageMax: 10

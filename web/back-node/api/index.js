@@ -5,7 +5,6 @@ const router = Router();
 
 const limit = `LIMIT 10`;
 
-// TODO: add tags (one-of-tags[] and all-of-tags[])
 const ALLOWED_KEYS = [
     "sortBy",
     "games.free =",
@@ -26,7 +25,9 @@ const ALLOWED_KEYS = [
     "games.updated >=",
     "games.released <=",
     "games.released >=",
-    "genres.genre IN"
+    "genres.genre IN",
+    "oneOfTags",
+    "allOfTags"
 ];
 
 const DEFAULT_SORT = "games.max_installs DESC";
@@ -46,7 +47,7 @@ const ALLOWED_SORTS = [
     "games.updated ASC",
     "games.updated DESC",
     "games.released ASC",
-    "games.released DESC",
+    "games.released DESC"
 ];
 
 router.get('/', async (req, res) => {
@@ -63,10 +64,32 @@ router.get('/', async (req, res) => {
 
         if (key === "genres.genre IN") {
             conditions.push(`${key} (?)`);
+            values.push(normV);
+        } else if (key === "oneOfTags") {
+            conditions.push(`
+                EXISTS (
+                    SELECT 1
+                    FROM games_tags
+                    JOIN tags ON games_tags.tag_id = tags.id
+                    WHERE games_tags.game_id = games.id
+                        AND tags.tag IN (?)
+                )`);
+            values.push(normV);
+        } else if (key === "allOfTags") {
+            conditions.push(`
+                (
+                    SELECT COUNT(DISTINCT tags.tag)
+                    FROM games_tags
+                    JOIN tags ON games_tags.tag_id = tags.id
+                    WHERE games_tags.game_id = games.id
+                        AND tags.tag IN (?)
+                ) = ?`);
+            values.push(normV);
+            values.push(normV.length);
         } else {
             conditions.push(`${key} ?`);
+            values.push(normV);
         }
-        values.push(normV);
     }
 
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
@@ -145,6 +168,8 @@ function normalizeValue(condition, value) {
         case "games.released >=":
             return normalizeValueDate();
         case "genres.genre IN":
+        case "oneOfTags":
+        case "allOfTags":
             return normalizeValueArray();
         default:
             return null;
@@ -172,9 +197,14 @@ function normalizeValue(condition, value) {
     }
 
     function normalizeValueArray() {
-        if (typeof value === 'string') return value.split(',').map(s => s.trim()).filter(Boolean);
-        if (Array.isArray(value)) return value;
-        return null;
+        let resultArray = [];
+        if (typeof value === 'string') {
+            resultArray = value.split(',').map(s => s.trim()).filter(Boolean);
+        }
+        if (Array.isArray(value)) {
+            resultArray = value;
+        }
+        return (resultArray.length !== 0) ? resultArray : null;
     }
 }
 
