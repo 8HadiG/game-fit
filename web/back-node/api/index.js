@@ -190,7 +190,7 @@ function normalizeValue(condition, value) {
     }
 
     function normalizeValueDate() {
-        if (value === undefined || value === null) return null;
+        if (value === undefined || value === null || value.trim() === "") return null;
         const dtString = new Date(value);
         if (isNaN(dtString)) return null;
         return dtString.toISOString().slice(0, 10)
