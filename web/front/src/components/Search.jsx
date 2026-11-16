@@ -1,306 +1,394 @@
-import { useState } from 'react';
+import { useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-export default function Search(props) {
-    const initFormData = {
-        "sortBy": "",
-        "games.free =": "",
-        "games.offers_iap =": "",
-        "games.ad_supported =": "",
-        "games.android_version <=": "",
-        "games.max_installs <=": "",
-        "games.max_installs >=": "",
-        "games.score <=": "",
-        "games.score >=": "",
-        "games.price <=": "",
-        "games.price >=": "",
-        "games.ratings <=": "",
-        "games.ratings >=": "",
-        "games.reviews <=": "",
-        "games.reviews >=": "",
-        "games.updated <=": "",
-        "games.updated >=": "",
-        "games.released <=": "",
-        "games.released >=": "",
-        "genres.genre IN": "",
-        "oneOfTags": "",
-        "allOfTags": ""
-    };
+const INITIAL_FORM_DATA = {
+  sortBy: "",
+  "games.free =": "",
+  "games.offers_iap =": "",
+  "games.ad_supported =": "",
+  "games.android_version <=": "",
+  "games.max_installs <=": "",
+  "games.max_installs >=": "",
+  "games.score <=": "",
+  "games.score >=": "",
+  "games.price <=": "",
+  "games.price >=": "",
+  "games.ratings <=": "",
+  "games.ratings >=": "",
+  "games.reviews <=": "",
+  "games.reviews >=": "",
+  "games.updated <=": "",
+  "games.updated >=": "",
+  "games.released <=": "",
+  "games.released >=": "",
+  "genres.genre IN": "",
+  oneOfTags: "",
+  allOfTags: "",
+};
 
-    const [formData, setFormData] = useState(initFormData);
+const NUMBER_FIELDS = [
+  { label: "Min Installs", name: "games.max_installs >=" },
+  { label: "Max Installs", name: "games.max_installs <=" },
+  { label: "Min Score", name: "games.score >=" },
+  { label: "Max Score", name: "games.score <=" },
+  { label: "Min Price", name: "games.price >=" },
+  { label: "Max Price", name: "games.price <=" },
+  { label: "Min Ratings", name: "games.ratings >=" },
+  { label: "Max Ratings", name: "games.ratings <=" },
+  { label: "Min Reviews", name: "games.reviews >=" },
+  { label: "Max Reviews", name: "games.reviews <=" },
+  {
+    label: "Supported Android Version",
+    name: "games.android_version <=",
+  },
+];
 
-    function handleChange(event) {
-        const { name, value } = event.target;
+const DATE_FIELDS = [
+  { label: "Latest update after", name: "games.updated >=" },
+  { label: "Latest update before", name: "games.updated <=" },
+  { label: "Released after", name: "games.released >=" },
+  { label: "Released before", name: "games.released <=" },
+];
 
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    }
+const TEXT_FIELDS = [
+  {
+    label: "Genres (separate multiple values with commas)",
+    name: "genres.genre IN",
+  },
+  {
+    label: "Contains at least one of these tags (comma-separated)",
+    name: "oneOfTags",
+  },
+  {
+    label: "Contains all of these tags (comma-separated)",
+    name: "allOfTags",
+  },
+];
 
-    function handleReset() {
-        setFormData(initFormData);
-    }
+const SORT_OPTIONS = [
+  ["games.max_installs DESC", "Installs (High to Low)"],
+  ["games.max_installs ASC", "Installs (Low to High)"],
+  ["games.score DESC", "Score (High to Low)"],
+  ["games.score ASC", "Score (Low to High)"],
+  ["games.ratings DESC", "Ratings (High to Low)"],
+  ["games.ratings ASC", "Ratings (Low to High)"],
+  ["games.reviews DESC", "Reviews (High to Low)"],
+  ["games.reviews ASC", "Reviews (Low to High)"],
+  ["games.price DESC", "Price (High to Low)"],
+  ["games.price ASC", "Price (Low to High)"],
+  ["games.android_version DESC", "Android version (High to Low)"],
+  ["games.android_version ASC", "Android version (Low to High)"],
+  ["games.updated DESC", "Latest update (Newest first)"],
+  ["games.updated ASC", "Latest update (Oldest first)"],
+  ["games.released DESC", "Release date (Newest first)"],
+  ["games.released ASC", "Release date (Oldest first)"],
+];
 
-    async function handleSubmit(event) {
-        event.preventDefault();
+const inputClass =
+  "w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
 
-        for (const k in formData) {
-            if (typeof formData[k] === "string") {
-                formData[k] = formData[k].trim();
-            }
-        }
-        const params = new URLSearchParams(formData).toString();
+const labelClass = "mb-1.5 block text-sm font-medium text-gray-700";
 
-        try {
-            const res = await fetch(`/api?${params}`, {
-                method: "GET"
-            });
+function InputField({ label, name, value, onChange, type = "text" }) {
+  const id = name;
 
-            if (!res.ok) {
-                throw new Error("Request failed");
-            }
+  return (
+    <div>
+      <label htmlFor={id} className={labelClass}>
+        {label}
+      </label>
 
-            const data = await res.json();
-
-            props.setData(data);
-
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    return (
-        <form onSubmit={handleSubmit}>
-            <button type="button" onClick={handleReset}>
-                Reset
-            </button>
-
-            <label>Sort By:</label>
-            <select
-                name="sortBy"
-                value={formData["sortBy"]}
-                onChange={handleChange}
-            >
-                <option value="games.max_installs DESC">Installs (High to Low)</option>
-                <option value="games.max_installs ASC">Installs (Low to High)</option>
-                <option value="games.score DESC">Score (High to Low)</option>
-                <option value="games.score ASC">Score (Low to High)</option>
-                <option value="games.ratings DESC">Amount of Ratings (High to Low)</option>
-                <option value="games.ratings ASC">Amount of Ratings (Low to High)</option>
-                <option value="games.reviews DESC">Amount of Reviews (High to Low)</option>
-                <option value="games.reviews ASC">Amount of Reviews (Low to High)</option>
-                <option value="games.price DESC">Price (High to Low)</option>
-                <option value="games.price ASC">Price (Low to High)</option>
-                <option value="games.android_version DESC">Minimum android version required (High to Low)</option>
-                <option value="games.android_version ASC">Minimum android version required (Low to High)</option>
-                <option value="games.updated DESC">Latest update (Newest first)</option>
-                <option value="games.updated ASC">Latest update (Oldest first)</option>
-                <option value="games.released DESC">Released Date (Newest first)</option>
-                <option value="games.released ASC">Released Date (Oldest first)</option>
-            </select>
-
-            <InputFieldAYN
-                legend="Free to download:"
-                name="games.free ="
-                form={formData["games.free ="]}
-                onChange={handleChange}
-            />
-            <InputFieldAYN
-                legend="Contains in app purchases:"
-                name="games.offers_iap ="
-                form={formData["games.offers_iap ="]}
-                onChange={handleChange}
-            />
-            <InputFieldAYN
-                legend="Contains ads:"
-                name="games.ad_supported ="
-                form={formData["games.ad_supported ="]}
-                onChange={handleChange}
-            />
-
-            <label>Minimum android version required:</label>
-            <input
-                type="number"
-                name="games.android_version <="
-                value={formData["games.android_version <="]}
-                onChange={handleChange}
-            />
-
-            <label>Min Installs:</label>
-            <input
-                type="number"
-                name="games.max_installs >="
-                value={formData["games.max_installs >="]}
-                onChange={handleChange}
-            />
-
-            <label>Max Installs:</label>
-            <input
-                type="number"
-                name="games.max_installs <="
-                value={formData["games.max_installs <="]}
-                onChange={handleChange}
-            />
-
-            <label>Min Score:</label>
-            <input
-                type="number"
-                name="games.score >="
-                value={formData["games.score >="]}
-                onChange={handleChange}
-            />
-
-            <label>Max Score:</label>
-            <input
-                type="number"
-                name="games.score <="
-                value={formData["games.score <="]}
-                onChange={handleChange}
-            />
-
-            <label>Min Price:</label>
-            <input
-                type="number"
-                name="games.price >="
-                value={formData["games.price >="]}
-                onChange={handleChange}
-            />
-
-            <label>Max Price:</label>
-            <input
-                type="number"
-                name="games.price <="
-                value={formData["games.price <="]}
-                onChange={handleChange}
-            />
-
-            <label>Min Amount of Ratings:</label>
-            <input
-                type="number"
-                name="games.ratings >="
-                value={formData["games.ratings >="]}
-                onChange={handleChange}
-            />
-
-            <label>Max Amount of Ratings:</label>
-            <input
-                type="number"
-                name="games.ratings <="
-                value={formData["games.ratings <="]}
-                onChange={handleChange}
-            />
-
-            <label>Min Amount of Reviews:</label>
-            <input
-                type="number"
-                name="games.reviews >="
-                value={formData["games.reviews >="]}
-                onChange={handleChange}
-            />
-
-            <label>Max Amount of Reviews:</label>
-            <input
-                type="number"
-                name="games.reviews <="
-                value={formData["games.reviews <="]}
-                onChange={handleChange}
-            />
-
-            <label>Latest Update After:</label>
-            <input
-                type="date"
-                name="games.updated >="
-                value={formData["games.updated >="]}
-                onChange={handleChange}
-            />
-
-            <label>Latest Update Before:</label>
-            <input
-                type="date"
-                name="games.updated <="
-                value={formData["games.updated <="]}
-                onChange={handleChange}
-            />
-
-            <label>Released After:</label>
-            <input
-                type="date"
-                name="games.released >="
-                value={formData["games.released >="]}
-                onChange={handleChange}
-            />
-
-            <label>Released Before:</label>
-            <input
-                type="date"
-                name="games.released <="
-                value={formData["games.released <="]}
-                onChange={handleChange}
-            />
-
-            <label>Genres (use , for multiple input):</label>
-            <input
-                type="text"
-                name="genres.genre IN"
-                value={formData["genres.genre IN"]}
-                onChange={handleChange}
-            />
-
-            <label>Tags (use , for multiple input): Contains atleast on of the following tags:</label>
-            <input
-                type="text"
-                name="oneOfTags"
-                value={formData["oneOfTags"]}
-                onChange={handleChange}
-            />
-
-            <label>Tags (use , for multiple input): Contains every one of the following tags:</label>
-            <input
-                type="text"
-                name="allOfTags"
-                value={formData["allOfTags"]}
-                onChange={handleChange}
-            />
-
-            <button type="submit">Search</button>
-        </form>
-    );
+      <input
+        id={id}
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        className={inputClass}
+      />
+    </div>
+  );
 }
 
-function InputFieldAYN(props) {
-    return (
-        <fieldset>
-            <legend>{props.legend}</legend>
-            <label>
-                <input
-                    type="radio"
-                    name={props.name}
-                    value=""
-                    checked={props.form === ""}
-                    onChange={props.onChange}
-                />
-                All
-            </label>
-            <label>
-                <input
-                    type="radio"
-                    name={props.name}
-                    value="true"
-                    checked={props.form === "true"}
-                    onChange={props.onChange}
-                />
-                Yes
-            </label>
-            <label>
-                <input
-                    type="radio"
-                    name={props.name}
-                    value="false"
-                    checked={props.form === "false"}
-                    onChange={props.onChange}
-                />
-                No
-            </label>
-        </fieldset>
+function InputFieldAYN({ legend, name, value, onChange }) {
+  const options = [
+    ["", "All"],
+    ["true", "Yes"],
+    ["false", "No"],
+  ];
+
+  return (
+    <fieldset className="space-y-3">
+      <legend className="mb-2 text-sm font-medium text-gray-700">
+        {legend}
+      </legend>
+
+      <div className="3xs:flex-row flex flex-col gap-x-5 gap-y-1">
+        {options.map(([optionValue, label]) => (
+          <label
+            key={optionValue}
+            className="flex cursor-pointer items-center gap-1 text-sm text-gray-700"
+          >
+            <input
+              type="radio"
+              name={name}
+              value={optionValue}
+              checked={value === optionValue}
+              onChange={onChange}
+              className="h-4 w-4 accent-blue-600"
+            />
+            {label}
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
+export default function Search({ setData }) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+
+  useEffect(() => {
+    setFormData((prev) => {
+      const next = { ...prev };
+      for (const key of Object.keys(INITIAL_FORM_DATA)) {
+        if (searchParams.has(key)) next[key] = searchParams.get(key);
+      }
+      return next;
+    });
+  }, [searchParams]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams).toString();
+    if (!params) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api?${params}`, { method: "GET" });
+        if (!res.ok) throw new Error("Request failed");
+        const data = await res.json();
+        if (!cancelled) setData(data);
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [searchParams, setData]);
+
+  function syncParam(name, value) {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (value === "" || value == null) next.delete(name);
+        else next.set(name, value);
+        return next;
+      },
+      { replace: true },
     );
+  }
+
+  function handleChange(event) {
+    const { name, value } = event.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    syncParam(name, value);
+  }
+
+  function handleReset() {
+    setFormData({ ...INITIAL_FORM_DATA });
+    setSearchParams({}, { replace: true });
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    const cleanedFormData = Object.fromEntries(
+      Object.entries(formData).map(([key, value]) => [
+        key,
+        typeof value === "string" ? value.trim() : value,
+      ]),
+    );
+
+    setSearchParams(
+      Object.fromEntries(
+        Object.entries(cleanedFormData).filter(([, v]) => v !== ""),
+      ),
+      { replace: true },
+    );
+
+    const params = new URLSearchParams(cleanedFormData).toString();
+
+    try {
+      const res = await fetch(`/api?${params}`, {
+        method: "GET",
+      });
+
+      if (!res.ok) {
+        throw new Error("Request failed");
+      }
+
+      const data = await res.json();
+      setData(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="mx-auto max-w-5xl space-y-6 rounded-2xl bg-gray-50 p-4 sm:p-6"
+    >
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900">Game Filters</h2>
+        <p className="mt-1 text-sm text-gray-500">
+          Customize your search using the filters below.
+        </p>
+      </div>
+
+      <SumDet
+        sum="Sorting"
+        det={
+          <>
+            <label htmlFor="sortBy" className={labelClass}>
+              Sort by
+            </label>
+
+            <select
+              id="sortBy"
+              name="sortBy"
+              value={formData.sortBy}
+              onChange={handleChange}
+              className={inputClass}
+            >
+              {SORT_OPTIONS.map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </>
+        }
+      />
+
+      <SumDet
+        sum="Game Properties"
+        det={
+          <div className="xs:grid-cols-2 grid gap-x-12 gap-y-6 md:grid-cols-3">
+            <InputFieldAYN
+              legend="Free to download"
+              name="games.free ="
+              value={formData["games.free ="]}
+              onChange={handleChange}
+            />
+
+            <InputFieldAYN
+              legend="Contains in-app purchases"
+              name="games.offers_iap ="
+              value={formData["games.offers_iap ="]}
+              onChange={handleChange}
+            />
+
+            <InputFieldAYN
+              legend="Contains ads"
+              name="games.ad_supported ="
+              value={formData["games.ad_supported ="]}
+              onChange={handleChange}
+            />
+          </div>
+        }
+      />
+
+      <SumDet
+        sum="Numeric Filters"
+        det={
+          <div className="xs:grid-cols-4 grid grid-cols-2 gap-5 md:grid-cols-6">
+            {NUMBER_FIELDS.map((field, index) => (
+              <div
+                key={field.name}
+                className={
+                  index === NUMBER_FIELDS.length - 1 ? "col-span-2" : ""
+                }
+              >
+                <InputField
+                  {...field}
+                  type="number"
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                />
+              </div>
+            ))}
+          </div>
+        }
+      />
+
+      <SumDet
+        sum="Date Filters"
+        det={
+          <div className="grid gap-5 sm:grid-cols-2">
+            {DATE_FIELDS.map((field) => (
+              <InputField
+                key={field.name}
+                {...field}
+                type="date"
+                value={formData[field.name]}
+                onChange={handleChange}
+              />
+            ))}
+          </div>
+        }
+      />
+
+      <SumDet
+        sum="Genres & Tags"
+        det={
+          <div className="space-y-5">
+            {TEXT_FIELDS.map((field) => (
+              <InputField
+                key={field.name}
+                {...field}
+                value={formData[field.name]}
+                onChange={handleChange}
+              />
+            ))}
+          </div>
+        }
+      />
+
+      <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <button
+          type="button"
+          onClick={handleReset}
+          className="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+        >
+          Reset filters
+        </button>
+
+        <button
+          type="submit"
+          className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+        >
+          Search games
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function SumDet({ sum, det }) {
+  return (
+    <details className="cursor-pointer rounded-xl border border-gray-200 bg-white shadow-sm">
+      <summary className="px-5 pt-1 pb-2 text-lg font-semibold text-gray-900">
+        {sum}
+      </summary>
+      <div className="mx-5 mt-1 mb-4">{det}</div>
+    </details>
+  );
 }

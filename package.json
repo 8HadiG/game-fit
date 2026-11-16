@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "game_fit",
   "private": true,
   "version": "1.0.0",
@@ -8,5 +8,9 @@
     "web:build": "npm --prefix web/front run build",
     "web:dev": "npm --prefix web/front run dev",
     "web:server": "npm --prefix web/back-node start"
+  },
+  "devDependencies": {
+    "prettier": "^3.10.1",
+    "prettier-plugin-tailwindcss": "^0.8.1"
   }
 }
