@@ -176,19 +176,7 @@ export default function Search({ setData }) {
     return () => {
       cancelled = true;
     };
-  }, [searchParams, setData]);
-
-  function syncParam(name, value) {
-    setSearchParams(
-      (prev) => {
-        const next = new URLSearchParams(prev);
-        if (value === "" || value == null) next.delete(name);
-        else next.set(name, value);
-        return next;
-      },
-      { replace: true },
-    );
-  }
+  }, []);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -197,8 +185,6 @@ export default function Search({ setData }) {
       ...prev,
       [name]: value,
     }));
-
-    syncParam(name, value);
   }
 
   function handleReset() {

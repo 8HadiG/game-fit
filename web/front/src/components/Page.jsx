@@ -66,7 +66,7 @@ function Stat({ label, value, help }) {
         {help && <InfoTip text={help} />}
       </div>
 
-      <div className="text-xl font-bold break-words text-gray-900 sm:text-2xl dark:text-white">
+      <div className="text-xl font-bold wrap-break-word text-gray-900 sm:text-2xl dark:text-white">
         <Value value={value} />
       </div>
     </div>
@@ -81,7 +81,7 @@ function Detail({ label, value, help }) {
         {help && <InfoTip text={help} />}
       </span>
 
-      <span className="text-sm font-medium break-words text-gray-900 dark:text-gray-100">
+      <span className="text-sm font-medium wrap-break-word text-gray-900 dark:text-gray-100">
         <Value value={value} />
       </span>
     </div>
@@ -208,7 +208,7 @@ export default function Page() {
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900 transition-colors dark:bg-gray-950 dark:text-gray-100">
       {/* HERO */}
-      <div className="relative">
+      <div className="relative overflow-hidden">
         {data.header_image ? (
           <div className="absolute inset-0 h-72 overflow-hidden sm:h-96">
             <img
@@ -216,10 +216,10 @@ export default function Page() {
               alt=""
               className="h-full w-full object-cover opacity-30 dark:opacity-25"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-white/50 via-gray-50/70 to-gray-50 dark:from-gray-950/40 dark:via-gray-950/75 dark:to-gray-950" />
+            <div className="absolute inset-0 bg-linear-to-b from-white/50 via-gray-50/70 to-gray-50 dark:from-gray-950/40 dark:via-gray-950/75 dark:to-gray-950" />
           </div>
         ) : (
-          <div className="absolute inset-0 h-72 bg-gradient-to-br from-purple-200 to-blue-200 dark:from-purple-950 dark:to-blue-950" />
+          <div className="absolute inset-0 h-72 bg-linear-to-br from-purple-200 to-blue-200 dark:from-purple-950 dark:to-blue-950" />
         )}
 
         <div className="relative mx-auto max-w-6xl px-4 pt-12 pb-10 sm:px-6 sm:pt-20">
@@ -245,7 +245,7 @@ export default function Page() {
                 {data.genre?.name || "Android Game"}
               </div>
 
-              <h1 className="text-3xl font-extrabold tracking-tight break-words text-gray-900 sm:text-5xl dark:text-white">
+              <h1 className="text-3xl font-extrabold tracking-tight wrap-break-word text-gray-900 sm:text-5xl dark:text-white">
                 <Value value={data.title} />
               </h1>
 
@@ -261,13 +261,25 @@ export default function Page() {
                 )}
 
                 {data.free !== null && data.free !== undefined && (
-                  <span className="rounded-full bg-green-100 px-3 py-1 text-sm text-green-700 dark:bg-green-900/50 dark:text-green-300">
+                  <span
+                    className={
+                      data.free
+                        ? "rounded-full bg-green-100 px-3 py-1 text-sm text-green-700 dark:bg-green-900/50 dark:text-green-300"
+                        : "rounded-full bg-yellow-100 px-3 py-1 text-sm text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300"
+                    }
+                  >
                     {data.free ? "Free to play" : "Paid game"}
                   </span>
                 )}
 
-                {data.ad_supported && (
+                {data.offers_iap === 1 && (
                   <span className="rounded-full bg-orange-100 px-3 py-1 text-sm text-orange-700 dark:bg-orange-900/50 dark:text-orange-300">
+                    In App Purchases
+                  </span>
+                )}
+
+                {data.ad_supported === 1 && (
+                  <span className="rounded-full bg-indigo-100 px-3 py-1 text-sm text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300">
                     Contains ads
                   </span>
                 )}
@@ -355,7 +367,7 @@ export default function Page() {
         <Section title="About this game">
           {description ? (
             <div
-              className="prose prose-gray dark:prose-invert prose-headings:font-bold prose-img:rounded-xl prose-a:text-blue-600 dark:prose-a:text-blue-400 max-w-none break-words"
+              className="prose prose-gray dark:prose-invert prose-headings:font-bold prose-img:rounded-xl prose-a:text-blue-600 dark:prose-a:text-blue-400 max-w-none wrap-break-word"
               dangerouslySetInnerHTML={{
                 __html: description,
               }}
