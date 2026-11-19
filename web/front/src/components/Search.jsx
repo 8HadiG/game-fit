@@ -1,6 +1,33 @@
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
+// ==========================================
+// THEME
+// Change colors here instead of editing JSX.
+// ==========================================
+
+const UI = {
+  panel:
+    "rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900",
+
+  input:
+    "w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-inherit shadow-sm outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-gray-700 dark:bg-gray-950 dark:placeholder:text-gray-500 dark:focus:ring-blue-900/40",
+
+  label: "mb-1.5 block text-sm font-medium",
+
+  muted: "text-gray-500 dark:text-gray-400",
+
+  secondaryButton:
+    "rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium transition hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700",
+
+  primaryButton:
+    "rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-950",
+};
+
+// ==========================================
+// FORM CONFIGURATION
+// ==========================================
+
 const INITIAL_FORM_DATA = {
   sortBy: "",
   "games.free =": "",
@@ -84,27 +111,24 @@ const SORT_OPTIONS = [
   ["games.released ASC", "Release date (Oldest first)"],
 ];
 
-const inputClass =
-  "w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
-
-const labelClass = "mb-1.5 block text-sm font-medium text-gray-700";
+// ==========================================
+// REUSABLE INPUT COMPONENTS
+// ==========================================
 
 function InputField({ label, name, value, onChange, type = "text" }) {
-  const id = name;
-
   return (
     <div>
-      <label htmlFor={id} className={labelClass}>
+      <label htmlFor={name} className={UI.label}>
         {label}
       </label>
 
       <input
-        id={id}
+        id={name}
         type={type}
         name={name}
         value={value}
         onChange={onChange}
-        className={inputClass}
+        className={UI.input}
       />
     </div>
   );
@@ -119,15 +143,13 @@ function InputFieldAYN({ legend, name, value, onChange }) {
 
   return (
     <fieldset className="space-y-3">
-      <legend className="mb-2 text-sm font-medium text-gray-700">
-        {legend}
-      </legend>
+      <legend className={UI.label}>{legend}</legend>
 
       <div className="3xs:flex-row flex flex-col gap-x-5 gap-y-1">
         {options.map(([optionValue, label]) => (
           <label
             key={optionValue}
-            className="flex cursor-pointer items-center gap-1 text-sm text-gray-700"
+            className="flex cursor-pointer items-center gap-1 text-sm"
           >
             <input
               type="radio"
@@ -135,8 +157,9 @@ function InputFieldAYN({ legend, name, value, onChange }) {
               value={optionValue}
               checked={value === optionValue}
               onChange={onChange}
-              className="h-4 w-4 accent-blue-600"
+              className="h-4 w-4 accent-blue-600 dark:accent-blue-400"
             />
+
             {label}
           </label>
         ))}
@@ -145,34 +168,54 @@ function InputFieldAYN({ legend, name, value, onChange }) {
   );
 }
 
+// ==========================================
+// MAIN SEARCH COMPONENT
+// ==========================================
+
 export default function Search({ setData }) {
   const [searchParams, setSearchParams] = useSearchParams();
+
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
 
+  // Restore form values from URL
   useEffect(() => {
     setFormData((prev) => {
       const next = { ...prev };
+
       for (const key of Object.keys(INITIAL_FORM_DATA)) {
-        if (searchParams.has(key)) next[key] = searchParams.get(key);
+        if (searchParams.has(key)) {
+          next[key] = searchParams.get(key);
+        }
       }
+
       return next;
     });
   }, [searchParams]);
 
+  // Initial search from URL
   useEffect(() => {
     const params = new URLSearchParams(searchParams).toString();
+
     if (!params) return;
+
     let cancelled = false;
+
     (async () => {
       try {
-        const res = await fetch(`/api?${params}`, { method: "GET" });
+        const res = await fetch(`/api?${params}`, {
+          method: "GET",
+        });
+
         if (!res.ok) throw new Error("Request failed");
+
         const data = await res.json();
+
         if (!cancelled) setData(data);
       } catch (e) {
         console.error(e);
       }
     })();
+
     return () => {
       cancelled = true;
     };
@@ -204,7 +247,7 @@ export default function Search({ setData }) {
 
     setSearchParams(
       Object.fromEntries(
-        Object.entries(cleanedFormData).filter(([, v]) => v !== ""),
+        Object.entries(cleanedFormData).filter(([, value]) => value !== ""),
       ),
       { replace: true },
     );
@@ -216,11 +259,10 @@ export default function Search({ setData }) {
         method: "GET",
       });
 
-      if (!res.ok) {
-        throw new Error("Request failed");
-      }
+      if (!res.ok) throw new Error("Request failed");
 
       const data = await res.json();
+
       setData(data);
     } catch (error) {
       console.error(error);
@@ -230,137 +272,130 @@ export default function Search({ setData }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto max-w-5xl space-y-6 rounded-2xl bg-gray-50 p-4 sm:p-6"
+      className="mx-auto max-w-5xl space-y-6 rounded-2xl p-4 text-inherit sm:p-6"
     >
+      {/* HEADER */}
+
       <div>
-        <h2 className="text-2xl font-bold text-gray-900">Game Filters</h2>
-        <p className="mt-1 text-sm text-gray-500">
+        <h2 className="text-2xl font-bold">Game Filters</h2>
+
+        <p className={`mt-1 text-sm ${UI.muted}`}>
           Customize your search using the filters below.
         </p>
       </div>
 
-      <SumDet
-        sum="Sorting"
-        det={
-          <>
-            <label htmlFor="sortBy" className={labelClass}>
-              Sort by
-            </label>
+      {/* SORTING */}
 
-            <select
-              id="sortBy"
-              name="sortBy"
-              value={formData.sortBy}
-              onChange={handleChange}
-              className={inputClass}
+      <SumDet sum="Sorting">
+        <label htmlFor="sortBy" className={UI.label}>
+          Sort by
+        </label>
+
+        <select
+          id="sortBy"
+          name="sortBy"
+          value={formData.sortBy}
+          onChange={handleChange}
+          className={UI.input}
+        >
+          {SORT_OPTIONS.map(([value, label]) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
+        </select>
+      </SumDet>
+
+      {/* GAME PROPERTIES */}
+
+      <SumDet sum="Game Properties">
+        <div className="xs:grid-cols-2 grid gap-x-12 gap-y-6 md:grid-cols-3">
+          <InputFieldAYN
+            legend="Free to download"
+            name="games.free ="
+            value={formData["games.free ="]}
+            onChange={handleChange}
+          />
+
+          <InputFieldAYN
+            legend="Contains in-app purchases"
+            name="games.offers_iap ="
+            value={formData["games.offers_iap ="]}
+            onChange={handleChange}
+          />
+
+          <InputFieldAYN
+            legend="Contains ads"
+            name="games.ad_supported ="
+            value={formData["games.ad_supported ="]}
+            onChange={handleChange}
+          />
+        </div>
+      </SumDet>
+
+      {/* NUMERIC FILTERS */}
+
+      <SumDet sum="Numeric Filters">
+        <div className="xs:grid-cols-4 grid grid-cols-2 gap-5 md:grid-cols-6">
+          {NUMBER_FIELDS.map((field, index) => (
+            <div
+              key={field.name}
+              className={index === NUMBER_FIELDS.length - 1 ? "col-span-2" : ""}
             >
-              {SORT_OPTIONS.map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </>
-        }
-      />
-
-      <SumDet
-        sum="Game Properties"
-        det={
-          <div className="xs:grid-cols-2 grid gap-x-12 gap-y-6 md:grid-cols-3">
-            <InputFieldAYN
-              legend="Free to download"
-              name="games.free ="
-              value={formData["games.free ="]}
-              onChange={handleChange}
-            />
-
-            <InputFieldAYN
-              legend="Contains in-app purchases"
-              name="games.offers_iap ="
-              value={formData["games.offers_iap ="]}
-              onChange={handleChange}
-            />
-
-            <InputFieldAYN
-              legend="Contains ads"
-              name="games.ad_supported ="
-              value={formData["games.ad_supported ="]}
-              onChange={handleChange}
-            />
-          </div>
-        }
-      />
-
-      <SumDet
-        sum="Numeric Filters"
-        det={
-          <div className="xs:grid-cols-4 grid grid-cols-2 gap-5 md:grid-cols-6">
-            {NUMBER_FIELDS.map((field, index) => (
-              <div
-                key={field.name}
-                className={
-                  index === NUMBER_FIELDS.length - 1 ? "col-span-2" : ""
-                }
-              >
-                <InputField
-                  {...field}
-                  type="number"
-                  value={formData[field.name]}
-                  onChange={handleChange}
-                />
-              </div>
-            ))}
-          </div>
-        }
-      />
-
-      <SumDet
-        sum="Date Filters"
-        det={
-          <div className="grid gap-5 sm:grid-cols-2">
-            {DATE_FIELDS.map((field) => (
               <InputField
-                key={field.name}
                 {...field}
-                type="date"
+                type="number"
                 value={formData[field.name]}
                 onChange={handleChange}
               />
-            ))}
-          </div>
-        }
-      />
+            </div>
+          ))}
+        </div>
+      </SumDet>
 
-      <SumDet
-        sum="Genres & Tags"
-        det={
-          <div className="space-y-5">
-            {TEXT_FIELDS.map((field) => (
-              <InputField
-                key={field.name}
-                {...field}
-                value={formData[field.name]}
-                onChange={handleChange}
-              />
-            ))}
-          </div>
-        }
-      />
+      {/* DATE FILTERS */}
+
+      <SumDet sum="Date Filters">
+        <div className="grid gap-5 sm:grid-cols-2">
+          {DATE_FIELDS.map((field) => (
+            <InputField
+              key={field.name}
+              {...field}
+              type="date"
+              value={formData[field.name]}
+              onChange={handleChange}
+            />
+          ))}
+        </div>
+      </SumDet>
+
+      {/* GENRES AND TAGS */}
+
+      <SumDet sum="Genres & Tags">
+        <div className="space-y-5">
+          {TEXT_FIELDS.map((field) => (
+            <InputField
+              key={field.name}
+              {...field}
+              value={formData[field.name]}
+              onChange={handleChange}
+            />
+          ))}
+        </div>
+      </SumDet>
+
+      {/* ACTIONS */}
 
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <button
           type="button"
           onClick={handleReset}
-          className="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+          className={UI.secondaryButton}
         >
           Reset filters
         </button>
 
-        <button
-          type="submit"
-          className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
-        >
+        <button type="submit" className={UI.primaryButton}>
           Search games
         </button>
       </div>
@@ -368,13 +403,16 @@ export default function Search({ setData }) {
   );
 }
 
-function SumDet({ sum, det }) {
+// ==========================================
+// REUSABLE COLLAPSIBLE SECTION
+// ==========================================
+
+function SumDet({ sum, children }) {
   return (
-    <details className="cursor-pointer rounded-xl border border-gray-200 bg-white shadow-sm">
-      <summary className="px-5 pt-1 pb-2 text-lg font-semibold text-gray-900">
-        {sum}
-      </summary>
-      <div className="mx-5 mt-1 mb-4">{det}</div>
+    <details className={`${UI.panel} cursor-pointer`}>
+      <summary className="px-5 py-3 text-lg font-semibold">{sum}</summary>
+
+      <div className="mx-5 mt-2 mb-5">{children}</div>
     </details>
   );
 }
