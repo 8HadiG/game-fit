@@ -3,13 +3,14 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
+    "build": "npm --prefix web start",
     "discovery": "npm --prefix discovery start",
     "enrichment": "npm --prefix enrichment start",
-    "web:build": "npm --prefix web/front run build",
-    "web:dev": "npm --prefix web/front run dev",
-    "web:server": "npm --prefix web/back-node start"
+    "front:build": "npm --prefix web/front run build",
+    "development": "concurrently \"npm --prefix web/back-node start\" \"npm --prefix web/front run dev\""
   },
   "devDependencies": {
+    "concurrently": "^10.0.7",
     "prettier": "^3.10.1",
     "prettier-plugin-tailwindcss": "^0.8.1"
   }

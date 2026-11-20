@@ -1,9 +1,9 @@
-# back-node changes:
+## Production Changes:
 
-1. ```npm uninstall dotenv```
-2. package.json -> remove scripts
-3. db.js -> remove import dotenv
-4. index.js -> listens on environment port instead of hardcoded port:
+1. `npm uninstall dotenv` & remove `package-lock.json`
+2. `package.json` -> remove `scripts` & `dotenv`
+3. `db.js` -> remove `import dotenv`
+4. `index.js` -> listens on environment port instead of hardcoded port:
 
 ```
 const PORT = process.env.PORT || 3000;
