@@ -15,13 +15,11 @@ export default function Layout({ children }) {
           <Link to="/" className="flex items-center gap-3">
             <img
               src={imgSrc}
-              alt="Explore Games Logo"
+              alt="GameFit Logo"
               className="h-12 w-auto sm:h-14"
               onError={() => setImgSrc(logoPng)}
             />
-            <span className="xs:block hidden text-xl font-bold">
-              Explore Games
-            </span>
+            <span className="xs:block hidden text-xl font-bold">GameFit</span>
           </Link>
 
           {/* Navigation */}
@@ -59,7 +57,7 @@ export default function Layout({ children }) {
               onError={() => setImgSrc(logoPng)}
             />
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              © 2026 Hadi Karimdokht. Licensed under MIT.
+              © 2026 Hadi. Licensed under MIT.
             </span>
           </div>
 

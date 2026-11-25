@@ -7,7 +7,7 @@ import Card from "./components/Card";
 import Page from "./components/Page";
 
 export default function App() {
-  const initData = ["Browse Android Games"];
+  const initData = ["Explore Android Games"];
   const [data, setData] = useState(initData);
 
   return (
