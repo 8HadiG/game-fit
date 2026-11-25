@@ -1,9 +1,9 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import logoSvg from "../assets/logo.svg";
 import logoPng from "../assets/logo.png";
 
 export default function Layout({ children }) {
-  // State to track if SVG failed to load
   const [imgSrc, setImgSrc] = useState(logoSvg);
 
   return (
@@ -11,39 +11,33 @@ export default function Layout({ children }) {
       {/* --- HEADER --- */}
       <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* Logo (Size is set to h-14 which is big enough to enjoy, but not massive) */}
-          <a href="/" className="flex items-center gap-3">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-3">
             <img
               src={imgSrc}
               alt="Explore Games Logo"
               className="h-12 w-auto sm:h-14"
-              onError={() => setImgSrc(logoPng)} // Fallback to PNG if SVG fails
+              onError={() => setImgSrc(logoPng)}
             />
-            <span className="hidden text-xl font-bold sm:block">
+            <span className="xs:block hidden text-xl font-bold">
               Explore Games
             </span>
-          </a>
+          </Link>
 
-          {/* Simple Navigation */}
+          {/* Navigation */}
           <nav className="flex gap-4 text-sm font-medium sm:gap-6 sm:text-base">
-            <a
-              href="#"
+            <Link
+              to="/"
               className="transition-colors hover:text-blue-600 dark:hover:text-blue-400"
             >
               Home
-            </a>
-            <a
-              href="#"
-              className="transition-colors hover:text-blue-600 dark:hover:text-blue-400"
-            >
-              Games
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              to="/info#about"
               className="transition-colors hover:text-blue-600 dark:hover:text-blue-400"
             >
               About
-            </a>
+            </Link>
           </nav>
         </div>
       </header>
@@ -71,24 +65,12 @@ export default function Layout({ children }) {
 
           {/* Footer Links */}
           <div className="flex gap-6 text-sm text-gray-500 dark:text-gray-400">
-            <a
-              href="#"
-              className="transition-colors hover:text-gray-900 dark:hover:text-white"
-            >
-              Privacy Policy
-            </a>
-            <a
-              href="#"
-              className="transition-colors hover:text-gray-900 dark:hover:text-white"
-            >
-              Terms of Service
-            </a>
-            <a
-              href="#"
+            <Link
+              to="/info#contact"
               className="transition-colors hover:text-gray-900 dark:hover:text-white"
             >
               Contact
-            </a>
+            </Link>
           </div>
         </div>
       </footer>
