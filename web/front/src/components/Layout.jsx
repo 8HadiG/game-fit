@@ -10,16 +10,16 @@ export default function Layout({ children }) {
     <div className="flex min-h-screen flex-col">
       {/* --- HEADER --- */}
       <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-15 max-w-7xl items-center justify-between px-4 sm:h-18 sm:px-6 lg:px-8">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
             <img
               src={imgSrc}
               alt="GameFit Logo"
-              className="h-12 w-auto sm:h-14"
+              className="h-18 w-auto sm:h-22"
               onError={() => setImgSrc(logoPng)}
             />
-            <span className="xs:block hidden text-xl font-bold">GameFit</span>
+            <span className="2xs:block hidden text-xl font-bold">GameFit</span>
           </Link>
 
           {/* Navigation */}
