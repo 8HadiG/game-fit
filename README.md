@@ -1,11 +1,18 @@
-## Production Changes:
+# GameFit
 
-1. `npm uninstall dotenv` & remove `package-lock.json`
-2. `package.json` -> remove `scripts` & `dotenv`
-3. `db.js` -> remove `import dotenv`
-4. `index.js` -> listens on environment port instead of hardcoded port:
+An open-source game discovery platform for Android games.
+Live at [gamefit.ir](https://gamefit.ir).
+The project is split into three parts:
 
-```
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+## Structure
+
+- **`discovery/`** — Finds Android games to add to the database.
+- **`enrichment/`** — Gathers detailed information about each game and stores it.
+- **`web/`** — The public website for browsing and filtering games.
+
+## Quick start
+
+```bash
+npm install
+npm run development
 ```

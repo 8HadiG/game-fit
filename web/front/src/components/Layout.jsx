@@ -59,7 +59,7 @@ export default function Layout({ children }) {
               onError={() => setImgSrc(logoPng)}
             />
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              © {new Date().getFullYear()} Explore Games. All rights reserved.
+              © 2026 Hadi Karimdokht. Licensed under MIT.
             </span>
           </div>
 
