@@ -1,6 +1,4 @@
-Change play store domain to game fit to see the game page (same query key as play store)
-Connect discovery to public database
-Connect enrichment to public database
+Backup db regularly
 Add advance search part for extra inputs inside search component so it occures less space
 Collapse description in game page (when its more than an specific size, but make sure its readable for seo bots)
 Page not found for other ids
