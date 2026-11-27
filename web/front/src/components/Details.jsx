@@ -99,6 +99,37 @@ function Section({ title, children }) {
   );
 }
 
+function Description({ description }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div className="relative min-w-0">
+      <div
+        className={`prose prose-gray dark:prose-invert prose-headings:font-bold prose-img:rounded-xl prose-a:text-blue-600 dark:prose-a:text-blue-400 max-w-none wrap-break-word transition-[max-height] duration-500 ease-in-out ${
+          expanded ? "max-h-none" : "max-h-24 overflow-hidden"
+        }`}
+        dangerouslySetInnerHTML={{ __html: description }}
+      />
+
+      {!expanded && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-b from-transparent via-gray-50/70 to-gray-50 dark:via-gray-950/70 dark:to-gray-950"
+        />
+      )}
+
+      <button
+        type="button"
+        onClick={() => setExpanded((prev) => !prev)}
+        aria-expanded={expanded}
+        className="relative mt-3 inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-400/10"
+      >
+        {expanded ? <>Show less</> : <>Read more</>}
+      </button>
+    </div>
+  );
+}
+
 export default function Details() {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
@@ -368,12 +399,7 @@ export default function Details() {
         {/* DESCRIPTION */}
         <Section title="About this game">
           {description ? (
-            <div
-              className="prose prose-gray dark:prose-invert prose-headings:font-bold prose-img:rounded-xl prose-a:text-blue-600 dark:prose-a:text-blue-400 max-w-none wrap-break-word"
-              dangerouslySetInnerHTML={{
-                __html: description,
-              }}
-            />
+            <Description description={description} />
           ) : (
             <Value value={null} />
           )}

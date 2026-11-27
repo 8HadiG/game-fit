@@ -272,7 +272,7 @@ export default function Search({ setData }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto max-w-5xl space-y-6 rounded-2xl p-4 text-inherit sm:p-6"
+      className="mx-auto max-w-5xl space-y-3 rounded-2xl px-4 text-inherit sm:px-6"
     >
       {/* HEADER */}
 
@@ -410,9 +410,9 @@ export default function Search({ setData }) {
 function SumDet({ sum, children }) {
   return (
     <details className={`${UI.panel} cursor-pointer`}>
-      <summary className="px-5 py-3 text-lg font-semibold">{sum}</summary>
+      <summary className="px-5 pt-1 pb-2 text-lg font-semibold">{sum}</summary>
 
-      <div className="mx-5 mt-2 mb-5">{children}</div>
+      <div className="mx-5 mt-2 mb-3">{children}</div>
     </details>
   );
 }
