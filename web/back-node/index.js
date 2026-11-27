@@ -1,11 +1,12 @@
 import express from "express";
 import path from "path";
-import api from "./api/index.js";
+import apiRouter from "./routes/api/index.js";
 
 const app = express();
+
 const distPath = path.join(import.meta.dirname, "..", "front", "dist");
 
-app.use("/api", api);
+app.use("/api", apiRouter);
 app.use(express.static(distPath));
 app.use((req, res) => res.sendFile(path.join(distPath, "index.html")));
 

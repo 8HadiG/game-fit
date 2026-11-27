@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export default function Card({
-  id,
+  app_id,
   header_image,
   icon,
   title,
@@ -37,7 +37,7 @@ export default function Card({
 
   return (
     <a
-      href={`/page?id=${encodeURIComponent(id)}`}
+      href={`/apps/details?id=${encodeURIComponent(app_id)}`}
       target="_blank"
       rel="noopener noreferrer"
     >

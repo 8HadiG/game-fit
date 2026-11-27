@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { pool } from "../db.js";
-import pageRouter from "./page.js";
+import { pool } from "../../db.js";
+import appsRouter from "./apps/index.js";
 
 const router = Router();
-router.use("/page", pageRouter);
+
+router.use("/apps", appsRouter);
 
 const limit = `LIMIT 10`;
 

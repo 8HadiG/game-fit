@@ -1,11 +1,12 @@
 import { Router } from "express";
-import { pool } from "../db.js";
+import { pool } from "../../../db.js";
 
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const id = Number(req.query.id);
-  if (!Number.isInteger(id))
+  const id = req.query.id;
+
+  if (typeof req.query.id !== "string")
     return res.status(400).json({ error: "Invalid id" });
 
   try {
@@ -37,13 +38,16 @@ router.get("/", async (req, res) => {
         FROM games
         LEFT JOIN genres ON games.genre_id = genres.id
         LEFT JOIN developers ON games.developer_id = developers.id
-        WHERE games.id = ?
+        WHERE games.app_id = ?
       `
         .replace(/\s+/g, " ")
         .trim(),
       id,
     );
-    res.json(data ? data : "There is no page for the requested game");
+
+    if (!data) return res.status(404).json({ message: "Not found" });
+
+    res.json(data);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });

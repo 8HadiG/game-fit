@@ -4,7 +4,7 @@ import Layout from "./components/Layout";
 import Search from "./components/Search";
 import Info from "./components/Info/Info";
 import Card from "./components/Card";
-import Page from "./components/Page";
+import Details from "./components/Details";
 
 export default function App() {
   const initData = ["Explore Android Games"];
@@ -36,7 +36,7 @@ export default function App() {
             }
           />
           <Route path="/info" element={<Info />} />
-          <Route path="/page" element={<Page />} />
+          <Route path="/apps/details" element={<Details />} />
         </Routes>
       </Layout>
     </div>

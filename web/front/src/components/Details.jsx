@@ -99,7 +99,7 @@ function Section({ title, children }) {
   );
 }
 
-export default function Page() {
+export default function Details() {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
 
@@ -122,7 +122,9 @@ export default function Page() {
       setData(null);
 
       try {
-        const res = await fetch(`/api/page?id=${encodeURIComponent(id)}`);
+        const res = await fetch(
+          `/api/apps/details?id=${encodeURIComponent(id)}`,
+        );
 
         if (!res.ok) {
           throw new Error("Unable to load game information.");
@@ -210,7 +212,7 @@ export default function Page() {
       {/* HERO */}
       <div className="relative overflow-hidden">
         {data.header_image ? (
-          <div className="absolute inset-0 h-72 overflow-hidden sm:h-96">
+          <div className="absolute inset-0 h-72 overflow-hidden lg:h-96">
             <img
               src={data.header_image}
               alt=""
@@ -222,10 +224,10 @@ export default function Page() {
           <div className="absolute inset-0 h-72 bg-linear-to-br from-purple-200 to-blue-200 dark:from-purple-950 dark:to-blue-950" />
         )}
 
-        <div className="relative mx-auto max-w-6xl px-4 pt-12 pb-10 sm:px-6 sm:pt-20">
-          <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-end">
+        <div className="relative mx-auto max-w-6xl px-4 pt-12 pb-10 lg:px-6 lg:pt-20">
+          <div className="flex flex-col items-center gap-6 lg:flex-row lg:items-end">
             {/* APP ICON */}
-            <div className="h-28 w-28 shrink-0 overflow-hidden rounded-3xl border-4 border-white bg-gray-200 shadow-xl sm:h-36 sm:w-36 dark:border-gray-800 dark:bg-gray-700">
+            <div className="h-28 w-28 shrink-0 overflow-hidden rounded-3xl border-4 border-white bg-gray-200 shadow-xl lg:h-36 lg:w-36 dark:border-gray-800 dark:bg-gray-700">
               {data.icon ? (
                 <img
                   src={data.icon}
@@ -240,22 +242,22 @@ export default function Page() {
             </div>
 
             {/* TITLE */}
-            <div className="min-w-0 flex-1 text-center sm:text-left">
-              <div className="mb-2 text-sm font-semibold text-blue-600 dark:text-blue-400">
+            <div className="min-w-0 flex-1 text-center lg:text-left">
+              <div className="mb-2 text-lg font-semibold text-blue-600 dark:text-blue-400">
                 {data.genre?.name || "Android Game"}
               </div>
 
-              <h1 className="text-3xl font-extrabold tracking-tight wrap-break-word text-gray-900 sm:text-5xl dark:text-white">
+              <h1 className="text-3xl font-extrabold tracking-tight wrap-break-word text-gray-900 lg:text-5xl dark:text-white">
                 <Value value={data.title} />
               </h1>
 
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-gray-600 sm:text-base dark:text-gray-300">
+              <p className="mt-3 max-w-2xl text-lg leading-relaxed text-gray-600 lg:text-base dark:text-gray-300">
                 <Value value={data.summary} />
               </p>
 
-              <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
+              <div className="mt-4 flex flex-wrap justify-center gap-2 lg:justify-start">
                 {data.developer?.name && (
-                  <span className="rounded-full bg-white/80 px-3 py-1 text-sm font-medium dark:bg-gray-800/80">
+                  <span className="rounded-full bg-white/80 px-3 py-1 text-lg font-medium dark:bg-gray-800/80">
                     {data.developer.name}
                   </span>
                 )}
@@ -264,8 +266,8 @@ export default function Page() {
                   <span
                     className={
                       data.free
-                        ? "rounded-full bg-green-100 px-3 py-1 text-sm text-green-700 dark:bg-green-900/50 dark:text-green-300"
-                        : "rounded-full bg-yellow-100 px-3 py-1 text-sm text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300"
+                        ? "rounded-full bg-green-100 px-3 py-1 text-lg text-green-700 dark:bg-green-900/50 dark:text-green-300"
+                        : "rounded-full bg-yellow-100 px-3 py-1 text-lg text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300"
                     }
                   >
                     {data.free ? "Free to play" : "Paid game"}
@@ -273,13 +275,13 @@ export default function Page() {
                 )}
 
                 {data.offers_iap === 1 && (
-                  <span className="rounded-full bg-orange-100 px-3 py-1 text-sm text-orange-700 dark:bg-orange-900/50 dark:text-orange-300">
+                  <span className="rounded-full bg-orange-100 px-3 py-1 text-lg text-orange-700 dark:bg-orange-900/50 dark:text-orange-300">
                     In App Purchases
                   </span>
                 )}
 
                 {data.ad_supported === 1 && (
-                  <span className="rounded-full bg-indigo-100 px-3 py-1 text-sm text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300">
+                  <span className="rounded-full bg-indigo-100 px-3 py-1 text-lg text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300">
                     Contains ads
                   </span>
                 )}
@@ -299,7 +301,7 @@ export default function Page() {
                   View on Play Store
                 </a>
               ) : (
-                <span className="text-sm text-gray-400">
+                <span className="text-lg text-gray-400">
                   Store link unavailable
                 </span>
               )}
