@@ -1,5 +1,3 @@
-Page not found for other ids
-Change "...app source..." text in games page
 Seperate home page for site (root path /)
 Prebuilt lists in home
 Add search stats to footer

@@ -158,7 +158,9 @@ export default function Details() {
         );
 
         if (!res.ok) {
-          throw new Error("Unable to load game information.");
+          throw new Error(
+            "Details for the requested game don't exist or are currently unavailable.",
+          );
         }
 
         const json = await res.json();
@@ -205,10 +207,10 @@ export default function Details() {
         <div className="w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-sm dark:bg-gray-800">
           <div className="mb-4 text-4xl">🎮</div>
           <h1 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
-            Game information unavailable
+            Game details unavailable
           </h1>
           <p className="text-gray-500 dark:text-gray-400">
-            {error || "No game information was found."}
+            {error || "Unable to load game details."}
           </p>
         </div>
       </main>
@@ -497,7 +499,7 @@ export default function Details() {
 
         {/* FOOTER */}
         <footer className="py-6 text-center text-sm text-gray-400 dark:text-gray-500">
-          Game information provided by the app data source.
+          Game details provided by GameFit.
         </footer>
       </div>
     </main>
