@@ -11,34 +11,32 @@ export default function App() {
   const [data, setData] = useState(initData);
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 transition-colors dark:bg-gray-950 dark:text-gray-100">
-      <Layout>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <Search setData={setData} />
-                <ul className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-4 p-4">
-                  {data[0] === initData[0] ? (
-                    <p>{data[0]}</p>
-                  ) : data.length === 0 ? (
-                    "No Games Found"
-                  ) : (
-                    data.map((item) => (
-                      <li key={item.id} className="mx-auto w-full max-w-65">
-                        <Card {...item} />
-                      </li>
-                    ))
-                  )}
-                </ul>
-              </>
-            }
-          />
-          <Route path="/info" element={<Info />} />
-          <Route path="/apps/details" element={<Details />} />
-        </Routes>
-      </Layout>
-    </div>
+    <Layout>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <Search setData={setData} />
+              <ul className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-4 p-4">
+                {data[0] === initData[0] ? (
+                  <p>{data[0]}</p>
+                ) : data.length === 0 ? (
+                  "No Games Found"
+                ) : (
+                  data.map((item) => (
+                    <li key={item.id} className="mx-auto w-full max-w-65">
+                      <Card {...item} />
+                    </li>
+                  ))
+                )}
+              </ul>
+            </>
+          }
+        />
+        <Route path="/info" element={<Info />} />
+        <Route path="/apps/details" element={<Details />} />
+      </Routes>
+    </Layout>
   );
 }
